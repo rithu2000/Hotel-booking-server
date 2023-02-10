@@ -1,56 +1,82 @@
 import adminModel from "../model/adminModel.js";
+import userModel from "../model/userModel.js";
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import ENV from '../config.js'
+import hotelModel from "../model/hotelModel.js";
 
 export async function verifyAdmin(req, res, next) {
+
     try {
+
         const { email } = req.method == 'GET' ? req.query : req.body;
         let exist = await adminModel.findOne({ email })
-        if (!exist) return res.status(404).send({ error: 'Cant find User...!' });
+        if (!exist) return res.status(404).send({ error: 'Cant find Admin...!' });
         next();
+
     } catch (error) {
         return res.status(404).send({ error: 'Authentication Error' });
+
     }
 }
 
+export async function getAllUsers(req, res, next) {
 
-// export async function adminSignup(req, res) {
-//     try {
-//         console.log(req.body, 'boddy')
-//         let { firstName, lastName, email, password } = req.body;
-//         const userExist = await userModel.findOne({ email: email })
-//         if (!userExist) {
-//             password = await bcrypt.hash(password, 10)
-//             const user = new userModel({
-//                 firstName,
-//                 lastName,
-//                 email,
-//                 password,
-//                 access: true
-//             });
-//             const userData = await user.save()
-//             console.log(userData);
-//             res.json(userData)
-//         }
-//         res.json({ message: "user already exist" })
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).send(error)
-//     }
-// }
+    try {
 
+        const Users = await userModel.find({})
+        console.log(Users);
+
+        return res.send(Users);
+    } catch (error) {
+        return res.status(200).send({ error: 'Users not found' });
+    }
+
+}
+
+export async function blockUser(req, res, next) {
+    try {
+        const userData = userModel.findOne({email})
+        if(userData) {
+            userData.access =false;
+        }
+        let userId = req.params.id;
+        await userSchema.updateOne({ _id: userId }, {
+            $set: {
+                access: false
+            }
+        })
+    } catch (error) {
+        return res.status(200).send({error: "Block action failed"})
+    }
+}
+
+export async function getAllHotels(req, res, next) {
+
+    try {
+
+        const hotels = hotelModel.find({})
+
+        return hotels
+
+    } catch (error) {
+        return res.status(200).send({ error: "No hotels found" })
+    }
+
+}
 
 
 export async function adminLogin(req, res) {
+
     const { email, password } = req.body;
     console.log(req.body);
     try {
+
         adminModel.findOne({ email })
             .then(admin => {
                 bcrypt.compare(password, admin.password)
                     .then(passwordCheck => {
-                        if (!passwordCheck) return res.status(400).send({ error: 'Dont have a Password' });
+                        if (!passwordCheck) return res.status(200).send({ error: 'Dont have a Password' });
 
                         const token = jwt.sign({
                             adminId: admin._id,
@@ -60,19 +86,21 @@ export async function adminLogin(req, res) {
                         return res.status(200).send({
                             msg: 'Login Succesfull...!',
                             email: admin.email,
-                            token,
-                            status: true
+                            status: true,
+                            token
                         });
                     })
                     .catch(error => {
-                        return res.status(400).send({ error: 'Password does not match' })
+                        return res.status(200).send({ error: 'Password does not match' })
                     })
             })
             .catch(error => {
-                return res.status(404).send({ error: 'User not found' });
+                return res.status(200).send({ error: 'User not found' });
             })
+
     } catch (error) {
         return res.status.send({ error });
     }
 
 }
+

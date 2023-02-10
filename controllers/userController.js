@@ -7,8 +7,9 @@ export async function verifyUser(req, res, next) {
     try {
         const { email } = req.method == 'GET' ? req.query : req.body;
         let exist = await userModel.findOne({ email })
-        if (!exist) return res.status(404).send({ error: 'Cant find User...!' });
+        if (!exist) return res.status(200).send({ error: 'Cant find User...!' });
         next();
+
     } catch (error) {
         return res.status(404).send({ error: 'Authentication Error' });
     }
@@ -17,40 +18,49 @@ export async function verifyUser(req, res, next) {
 
 export async function signup(req, res) {
     try {
-        console.log(req.body, 'boddy')
-        let { firstName, lastName, email, password } = req.body;
+
+        let { firstName, lastName, email, password, confirmPassword } = req.body;
         const userExist = await userModel.findOne({ email: email })
-        if (!userExist) {
-            password = await bcrypt.hash(password, 10)
-            const user = new userModel({
-                firstName,
-                lastName,
-                email,
-                password,
-                access: true
-            });
-            const userData = await user.save()
-            console.log(userData);
-            res.json(userData)
+        if (password === confirmPassword) {
+            if (!userExist) {
+                password = await bcrypt.hash(password, 10)
+                const user = new userModel({
+                    firstName,
+                    lastName,
+                    email,
+                    password,
+                    access: true
+                });
+                const userData = await user.save()
+                res.json(userData)
+            } else {
+                res.json({ message: "User already exist" })
+            }
+        } else {
+            res.json({ message: "Password mismatch" })
+
         }
-        res.json({ message: "user already exist" })
+
     } catch (error) {
         console.log(error);
-        return res.status(500).send(error)
+        return res.status(500).send({ error })
     }
+
 }
 
 
 
 export async function login(req, res) {
+
     const { email, password } = req.body;
     console.log(req.body);
     try {
+
         userModel.findOne({ email })
             .then(user => {
                 bcrypt.compare(password, user.password)
                     .then(passwordCheck => {
-                        if (!passwordCheck) return res.status(400).send({ error: 'Dont have a Password' });
+                        if (!passwordCheck) return res.status(200).send({ error: 'Wrong password...!' });
 
                         const token = jwt.sign({
                             userId: user._id,
@@ -65,12 +75,13 @@ export async function login(req, res) {
                         });
                     })
                     .catch(error => {
-                        return res.status(400).send({ error: 'Password does not match' })
+                        return res.status(200).send({ error: 'Password does not match' })
                     })
             })
             .catch(error => {
-                return res.status(404).send({ error: 'User not found' });
+                return res.status(200).send({ error: 'User not found' });
             })
+
     } catch (error) {
         return res.status.send({ error });
     }
