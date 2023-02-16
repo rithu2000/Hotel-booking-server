@@ -58,32 +58,37 @@ export async function login(req, res) {
 
         userModel.findOne({ email })
             .then(user => {
-                bcrypt.compare(password, user.password)
-                    .then(passwordCheck => {
-                        if (!passwordCheck) return res.status(200).send({ error: 'Wrong password...!' });
+                if (user.access == true) {
+                    bcrypt.compare(password, user.password)
+                        .then(passwordCheck => {
+                            if (!passwordCheck) return res.status(200).send({ error: 'Wrong password...!' });
 
-                        const token = jwt.sign({
-                            userId: user._id,
-                            email: user.email
-                        }, ENV.JWT_SECRET, { expiresIn: '24hr' });
+                            const token = jwt.sign({
+                                userId: user._id,
+                                email: user.email
+                            }, ENV.JWT_SECRET, { expiresIn: '24hr' });
 
-                        return res.status(200).send({
-                            msg: 'Login Succesfull...!',
-                            email: user.email,
-                            token,
-                            status: true
-                        });
-                    })
-                    .catch(error => {
-                        return res.status(200).send({ error: 'Password does not match' })
-                    })
+                            return res.status(200).send({
+                                msg: 'Login Succesfull...!',
+                                email: user.email,
+                                token,
+                                status: true
+                            });
+                        })
+                        .catch(error => {
+                            return res.status(200).send({ error: 'Password does not match' })
+                        })
+                } else {
+                    return res.status(200).send({ error: 'Restricted by the admin' })
+                }
             })
             .catch(error => {
                 return res.status(200).send({ error: 'User not found' });
             })
 
     } catch (error) {
-        return res.status.send({ error });
+        console.log(error);
+        return res.status(500).send({ error });
     }
 
 }

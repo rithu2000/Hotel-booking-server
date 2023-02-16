@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export const hotelSchema = new mongoose.Schema({
     hotel: {
         type: String,
-        require: true
+        required: true
     },
     location: {
         type: String,
