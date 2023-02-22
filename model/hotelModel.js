@@ -14,7 +14,7 @@ export const hotelSchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    imageUrls: [],
+    images: [],
 },
     {
         timestamps: true

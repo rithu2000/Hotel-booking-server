@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken'
 import ENV from '../config.js'
 import hotelModel from "../model/hotelModel.js";
-import authMiddleware from '../middleware/auth.js'
 import roomModel from "../model/roomModel.js";
 
 export async function verifyAdmin(req, res, next) {
@@ -98,8 +97,9 @@ export async function adminLogin(req, res) {
 
 }
 
-export async function addHotel(req, res) {
+export async function addingHotel(req, res) {
     try {
+        console.log(req.body)
         const exist = await hotelModel.findOne({ hotel: req.body.hotel })
 
         if (exist) return res.status(200).send({ error: "Hotel already exists", success: false });
@@ -138,16 +138,17 @@ export async function addRoom(req, res) {
     try {
         const exist = roomModel.findOne({ room: req.body.room })
 
-        if (exist) return res.status(200).send({ error: "Room is already existed" });
-        if (!exist) {
+        if (!exist) return res.status(200).send({ error: "Room is already existed" });
+        if (exist) {
             const newRoom = new roomModel(req.body)
             console.log(newRoom, "newRoom")
             await newRoom.save()
 
-            await hotelSchema.findByIdAndUpdate(hotelId, {
+            await hotelModel.findByIdAndUpdate(hotelId, {
                 $push: { rooms: newRoom._id },
             });
             res.send({ message: "new Room added succesfully" })
+
         } else {
             return res.status(200).send({ error: "Something went wrong" });
         }
@@ -175,14 +176,14 @@ export async function hotelById(req, res) {
 
 export async function deleteHotel(req, res) {
     console.log("deleting back")
-    // console.log(req.params)
+    console.log(req.params)
     try {
         const hotelId = req.params.hotelId
 
         console.log(hotelId)
         await hotelModel.deleteOne({ _id: hotelId })
 
-        res.send({ status: true })
+        return res.send({ status: true, success: 'Hotel has been deleted successfully' })
     } catch (error) {
         console.log(error)
         return res.status(400).json(error)
@@ -205,16 +206,19 @@ export async function deleteRoom(req, res) {
 }
 
 export async function editHotel(req, res) {
-    console.log(req.body);
+    console.log(req.body," req body aahnu ith");
+    console.log(req.params, "req params aahnu ith");
     try {
         const editHotel = await hotelModel.findById(req.params.id,
             {
                 $set: req.body
             }
         )
-        res.status(200).json(updateHotel)
+console.log(editHotel,"edit hotel entha mone");
+
+        return res.status(200).send(editHotel)
     } catch (error) {
-        res.status(500).json(error)
+        return res.status(500).json(error)
 
     }
 }
@@ -232,9 +236,9 @@ export async function getAllRoom(req, res) {
 
 
 export const updateHotel = async (req, res) => {
+    console.log(req.params,"params enthaaa");
+    console.log(req.body,"body aahnu ith");
     const { id, hotel, location, description, category, imageUrl } = req.body
-    console.log(req.params, "ooooooooooooooooooo")
-    console.log(hotel, location, description, category, "11111111111111111111111oooo")
 
     try {
         const result = await hotelModel

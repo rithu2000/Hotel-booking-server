@@ -13,7 +13,7 @@ router.route('/user-management').get(controller.getAllUsers);
 
 router.route('/useraccess/:status/:userId').get(controller.blockUser);
 
-router.route('/addhotel/:hotel').get(controller.addHotel);
+router.route('/addhotel').post(controller.addingHotel);
 
 router.route('/viewhotels').get(controller.getAllHotels);
 
