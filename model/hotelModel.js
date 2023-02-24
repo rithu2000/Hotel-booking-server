@@ -11,6 +11,9 @@ export const hotelSchema = new mongoose.Schema({
     category: {
         type: String
     },
+    rooms:{
+        type:[String]
+    },
     description: {
         type: String,
     },
