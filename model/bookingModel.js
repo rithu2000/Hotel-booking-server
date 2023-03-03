@@ -5,31 +5,34 @@ export const bookingSchema = new mongoose.Schema({
         type: String,
 
     },
-    roomId: {
-        type: String,
-
+    userId:{
+        type:String
     },
-    checkin: {
-        type: String,
-
+    roomId:{
+        type:String,
+       
     },
-    checkout: {
-        type: String,
-
+    checkin:{
+        type:String,
+    
     },
-    email: {
-        type: String
-
+    checkout:{
+        type:String,
+    
     },
-    phone: {
-        type: String
-
+    email:{
+        type:String
+        
     },
-    total: {
-        type: Number
+    phone:{
+        type:String
+        
     },
-
-    UA: [],
+    total:{
+        type:Number
+    },
+    
+    UA:[],
 },
     {
         timestamps: true

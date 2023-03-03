@@ -174,6 +174,7 @@ export async function checkDate(req, res) {
     console.log(dates, "date2222s");
     try {
         const data = await roomModel.findOne({ _id: hotelId });
+        console.log(data,'data aahnu kuttaa');
 
         console.log(dates, "dates")
         console.log("unavilqqqq room", data.unavailableRoom)

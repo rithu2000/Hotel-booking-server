@@ -29,4 +29,5 @@ router.route('/getHotelById/:hotelId').get(controller.hotelById)
 
 router.route('/updateHotel').post(controller.updateHotel)
 
+
 export default router;
