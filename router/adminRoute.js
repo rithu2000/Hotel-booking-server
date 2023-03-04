@@ -6,7 +6,6 @@ import Auth from '../middleware/auth.js'
 
 // router.route('/authenticate').post(controller.verifyAdmin, (req, res) => res.end());
 
-
 router.route('/admin-login').post(controller.adminLogin);
 
 router.route('/user-management').get(controller.getAllUsers);
@@ -28,6 +27,5 @@ router.route('/deleteRoom/:roomId').post(controller.deleteRoom)
 router.route('/getHotelById/:hotelId').get(controller.hotelById)
 
 router.route('/updateHotel').post(controller.updateHotel)
-
 
 export default router;

@@ -9,7 +9,7 @@ import bookingModel from "../model/bookingModel.js";
 export async function verifyUser(req, res, next) {
     try {
         const { email } = req.method == 'GET' ? req.query : req.body;
-        let exist = await userModel.findOne({ email })
+        const exist = await userModel.findOne({ email })
         if (!exist) return res.status(200).send({ error: 'Cant find User...!' });
         next();
 
@@ -18,11 +18,10 @@ export async function verifyUser(req, res, next) {
     }
 }
 
-
 export async function signup(req, res) {
     try {
 
-        let { firstName, lastName, email, password, confirmPassword } = req.body;
+        const { firstName, lastName, email, password, confirmPassword } = req.body;
         const userExist = await userModel.findOne({ email: email })
         if (password === confirmPassword) {
             if (!userExist) {
@@ -41,7 +40,6 @@ export async function signup(req, res) {
             }
         } else {
             res.json({ message: "Password mismatch" })
-
         }
 
     } catch (error) {
@@ -50,8 +48,6 @@ export async function signup(req, res) {
     }
 
 }
-
-
 
 export async function login(req, res) {
 
@@ -87,41 +83,38 @@ export async function login(req, res) {
             .catch(error => {
                 return res.status(200).send({ error: 'User not found' });
             })
-
     } catch (error) {
         console.log(error);
         return res.status(500).send({ error });
     }
-
 }
 
-
-
 export async function getHotelByCity(req, res) {
-    console.log(req.params.city, "body")
+
     const city = req.params.city
     try {
         const data = await hotelModel.find({ location: city })
-        console.log(data)
+
         return res.send(data)
     } catch (error) {
         console.log(error)
     }
-
 }
+
 export async function hotelDetails(req, res) {
+
     const Id = req.params.Id
-    console.log(Id, "Idd")
     try {
         const data = await hotelModel.findOne({ _id: Id })
-        console.log(data, "after Id ")
+
         return res.send(data)
     } catch (error) {
-
+        return res.status(500).send('Cannot fetch the Details')
     }
 }
 
 export async function hotelData(req, res) {
+
     try {
         const data = await hotelModel.find({});
 
@@ -132,15 +125,11 @@ export async function hotelData(req, res) {
 }
 
 export async function roomDetails(req, res) {
-    console.log("11111111111111111")
+
     const hotelId = req.params.Id
-    console.log(hotelId, "Iddss")
     try {
-        const data = await roomModel.find({
-            hotelId: hotelId
-        })
-        console.log("2222222222222222")
-        console.log(data, "data of room bY Hotel id ")
+        const data = await roomModel.find({ hotelId: hotelId })
+
         return res.send(data)
     } catch (error) {
         console.log(error)
@@ -149,7 +138,7 @@ export async function roomDetails(req, res) {
 
 
 export async function addDate(req, res) {
-    console.log("update Room Backend");
+
     const hotelId = req.params.Id;
     console.log(req.params);
     const dates = req.body;
@@ -166,18 +155,13 @@ export async function addDate(req, res) {
         console.log(error);
     }
 }
+
 export async function checkDate(req, res) {
-    console.log("check Room Backend");
+
     const hotelId = req.params.Id;
-    console.log(req.params);
     const dates = req.body
-    console.log(dates, "date2222s");
     try {
         const data = await roomModel.findOne({ _id: hotelId });
-        console.log(data,'data aahnu kuttaa');
-
-        console.log(dates, "dates")
-        console.log("unavilqqqq room", data.unavailableRoom)
 
         function compareArrays(arr1, arr2) {
             for (let i = 0; i < arr1.length; i++) {
@@ -187,9 +171,7 @@ export async function checkDate(req, res) {
             }
             return true;
         }
-
         const status = compareArrays(data.unavailableRoom, dates)
-        console.log(status, "statukjhk")
 
         res.send(status);
     } catch (error) {
@@ -197,44 +179,21 @@ export async function checkDate(req, res) {
     }
 }
 
-
-
 export async function bookRoom(req, res) {
-    console.log(req.body, 6666666666);
-    console.log(req.body, "body Room")
-    console.log(req.params, "params Room")
+
     const room = req.body
     const dates = req.body.UA
     const hotelId = req.params.Id
-    console.log(room, "Room")
-    console.log(hotelId, "hotelId")
     try {
         const data = await roomModel.findOne({ _id: hotelId });
         data.unavailableRoom = [...data.unavailableRoom, ...dates]
         data.save()
-        console.log(data, "roooom");
-
         const newBook = await new bookingModel(req.body)
-        console.log(newBook, "newRoom")
         await newBook.save()
-        // try {
-        // });
         res.send({ message: "Booked Succesfully" })
-
-        // } 
-        // const exist=hotelSchema.findOne({name:req.body.Room})
-        // console.log(exist,"mmmmmmm")
-
-        // if(!exist){
-        // return res
-        // .status(200)
-        // .send({ message: "Hotel already exists", success: false });
-        // }if(exist){
-
-        // }
 
     } catch (error) {
         console.log(error)
         return res.status(400).json({ error })
     }
-}
+};

@@ -4,13 +4,12 @@ import connect from './database/conn.js';
 import userRoute from './router/userRoute.js'
 import adminRoute from './router/adminRoute.js'
 
-
 const app = express();
 const port = 8000;
 
 app.use(
     cors({
-        origin: ["http://localhost:3000","https://www.bookmyroom.rithu.site"],
+        origin: ["http://localhost:3000","https://www.bookmyroom.rithu.site","https://bookmyroom.rithu.site"],
         methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
         credentials: true,
         exposedHeaders: ["Content-Length", "X-Foo", "X-Bar"],
