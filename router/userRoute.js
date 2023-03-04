@@ -24,6 +24,4 @@ router.route("/bookRoom/:Id").post(controller.bookRoom)
 
 router.route("/hoteldata").get(controller.hotelData)
 
-// router.route('/').get(controller.home);
-
 export default router;

@@ -9,41 +9,32 @@ import roomModel from "../model/roomModel.js";
 export async function verifyAdmin(req, res, next) {
 
     try {
-
         const { email } = req.method == 'GET' ? req.query : req.body;
-        let exist = await adminModel.findOne({ email })
+        const exist = await adminModel.findOne({ email })
         if (!exist) return res.status(200).send({ error: 'Cant find Admin...!' });
         next();
 
     } catch (error) {
         console.log(error);
         return res.status(404).send({ error: 'Authentication Error' });
-
     }
 }
 
 export async function getAllUsers(req, res, next) {
 
     try {
-
         const Users = await userModel.find({})
-        console.log(Users);
 
         return res.send(Users);
     } catch (error) {
         return res.status(200).send({ error: 'Users not found' });
     }
-
-}
+};
 
 export async function blockUser(req, res, next) {
 
-    console.log(req.params);
-
     const { status, userId } = req.params;
-
     try {
-
         const userData = await userModel.updateOne(
             { _id: userId },
             {
@@ -53,7 +44,6 @@ export async function blockUser(req, res, next) {
             }
         )
         res.status(200).json({ status: true, userData });
-
     } catch (error) {
         return res.status(200).send({ error: "Block action failed" })
     }
@@ -62,9 +52,7 @@ export async function blockUser(req, res, next) {
 export async function adminLogin(req, res) {
 
     const { email, password } = req.body;
-    console.log(req.body);
     try {
-
         adminModel.findOne({ email })
             .then(admin => {
                 bcrypt.compare(password, admin.password)
@@ -90,7 +78,6 @@ export async function adminLogin(req, res) {
             .catch(error => {
                 return res.status(200).send({ error: 'User not found' });
             })
-
     } catch (error) {
         return res.status.send({ error });
     }
@@ -98,8 +85,8 @@ export async function adminLogin(req, res) {
 }
 
 export async function addingHotel(req, res) {
+
     try {
-        console.log(req.body)
         const exist = await hotelModel.findOne({ hotel: req.body.hotel })
 
         if (exist) return res.status(200).send({ error: "Hotel already exists", success: false });
@@ -118,7 +105,6 @@ export async function addingHotel(req, res) {
 export async function getAllHotels(req, res, next) {
 
     try {
-
         const hotels = await hotelModel.find({})
 
         return res.send(hotels)
@@ -130,20 +116,16 @@ export async function getAllHotels(req, res, next) {
 
 export async function addRoom(req, res) {
 
-    console.log(req.body, "body Room")
-    console.log(req.params, "params Room")
     const room = req.body
     const hotelId = req.params.Id
-
     try {
         const exist = roomModel.findOne({ room: req.body.room })
 
         if (!exist) return res.status(200).send({ error: "Room is already existed" });
         if (exist) {
             const newRoom = new roomModel(req.body)
-            console.log(newRoom, "newRoom")
-            await newRoom.save()
 
+            await newRoom.save()
             await hotelModel.findByIdAndUpdate(hotelId, {
                 $push: { rooms: newRoom._id },
             });
@@ -158,46 +140,37 @@ export async function addRoom(req, res) {
     }
 }
 
-
 export async function hotelById(req, res) {
-    console.log(req.params, "req.body")
+
     const hotelId = req.params.hotelId
-    console.log(hotelId, "kkkkkkkkkkkkkkkkkkkkkkk")
     try {
         const data = await hotelModel.findOne({ _id: hotelId })
-        console.log(data, "hooooooooooooooooooootel")
+
         return res.send(data)
     } catch (error) {
         console.log(error)
     }
-
 }
 
-
 export async function deleteHotel(req, res) {
-    console.log("deleting back")
-    console.log(req.params)
+
     try {
         const hotelId = req.params.hotelId
 
-        console.log(hotelId)
         await hotelModel.deleteOne({ _id: hotelId })
-
         return res.send({ status: true, success: 'Hotel has been deleted successfully' })
     } catch (error) {
         console.log(error)
         return res.status(400).json(error)
     }
 }
+
 export async function deleteRoom(req, res) {
-    console.log("deleting back")
-    // console.log(req.params)
+
     try {
         const roomId = req.params.roomId
 
-        console.log(roomId)
         await roomModel.deleteOne({ _id: roomId })
-
         return res.send({ status: true })
     } catch (error) {
         console.log(error)
@@ -206,15 +179,13 @@ export async function deleteRoom(req, res) {
 }
 
 export async function editHotel(req, res) {
-    console.log(req.body," req body aahnu ith");
-    console.log(req.params, "req params aahnu ith");
+
     try {
         const editHotel = await hotelModel.findById(req.params.id,
             {
                 $set: req.body
             }
         )
-console.log(editHotel,"edit hotel entha mone");
 
         return res.status(200).send(editHotel)
     } catch (error) {
@@ -225,8 +196,8 @@ console.log(editHotel,"edit hotel entha mone");
 export async function getAllRoom(req, res) {
 
     try {
-        console.log("object in back")
         const Rooms = await roomModel.find({})
+
         return res.send(Rooms)
     } catch (error) {
         console.log(error)
@@ -236,8 +207,7 @@ export async function getAllRoom(req, res) {
 
 
 export const updateHotel = async (req, res) => {
-    console.log(req.params,"params enthaaa");
-    console.log(req.body,"body aahnu ith");
+
     const { id, hotel, location, description, category, imageUrl } = req.body
 
     try {
@@ -261,5 +231,4 @@ export const updateHotel = async (req, res) => {
         console.log(error);
     }
 
-}
-
+};
