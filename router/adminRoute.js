@@ -28,4 +28,12 @@ router.route('/getHotelById/:hotelId').get(controller.hotelById)
 
 router.route('/updateHotel').post(controller.updateHotel)
 
+router.route('/getAllBooking').get(controller.getAllBookings)
+
+router.route("/getChart").get(controller.getUserChart)
+
+router.route("/getrevenue").get(controller.revenueChart)
+
+router.route('/getRoomById/:Id').get(controller.getBookedRoom)
+
 export default router;
