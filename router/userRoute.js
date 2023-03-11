@@ -4,7 +4,7 @@ const router = Router();
 import * as controller from '../controllers/userController.js'
 import Auth from '../middleware/auth.js'
 
-router.route('/register').post( controller.signup);
+router.route('/register').post(controller.signup);
 
 router.route('/login').post(controller.login);
 
@@ -23,5 +23,11 @@ router.route("/checkDate/:Id").post(controller.checkDate)
 router.route("/bookRoom/:Id").post(controller.bookRoom)
 
 router.route("/hoteldata").get(controller.hotelData)
+
+router.route("/getMyBookings/:Id").get(controller.getMyBookings)
+
+router.route("/getuser/:userId").post(controller.getUserDetails)
+
+
 
 export default router;

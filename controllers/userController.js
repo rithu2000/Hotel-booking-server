@@ -67,6 +67,7 @@ export async function login(req, res) {
                             }, ENV.JWT_SECRET, { expiresIn: '24hr' });
 
                             return res.status(200).send({
+                                userId: user._id,
                                 msg: 'Login Succesfull...!',
                                 email: user.email,
                                 token,
@@ -197,3 +198,28 @@ export async function bookRoom(req, res) {
         return res.status(400).json({ error })
     }
 };
+
+export const getMyBookings = async (req, res) => {
+    try {
+        console.log(req.params, "ID ")
+        const Id = req.params.Id
+        console.log(Id, "IDDDDDDD")
+        const data = await bookingModel.find({ userId: Id }).populate("roomId")
+        console.log(data, "2222222222222222222222")
+        return res.send(data)
+    } catch (error) {
+        console.log(error)
+    }   
+};
+
+export async function getUserDetails(req, res) {
+    try {
+        const {userId} = req.params
+        console.log(req.params);
+        const data = await userModel.findById(userId)
+        console.log(data, "the user kjhjkhkjhkhkjhkjhjkhjkhjklh");
+        return res.send(data)
+    } catch (error) {
+        return res.status(404).send({ error});
+    }
+}
