@@ -26,7 +26,9 @@ router.route('/deleteRoom/:roomId').post(controller.deleteRoom)
 
 router.route('/getHotelById/:hotelId').get(controller.hotelById)
 
-router.route('/updateHotel').post(controller.updateHotel)
+router.route('/updateHotel/:Id').put(controller.updateHotel)
+
+router.route("/updateRoom/:Id").put(controller.updateRoom)
 
 router.route('/getAllBooking').get(controller.getAllBookings)
 
@@ -35,5 +37,11 @@ router.route("/getChart").get(controller.getUserChart)
 router.route("/getrevenue").get(controller.revenueChart)
 
 router.route('/getRoomById/:Id').get(controller.getBookedRoom)
+
+router.route('/getBookingTotal').get(controller.getBookingTotal)
+
+router.route('/totalRevenue').get(controller.getTotalRevenue)
+
+router.route('/totalUser').get(controller.totalUser)
 
 export default router;

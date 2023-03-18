@@ -107,6 +107,7 @@ export async function getAllHotels(req, res, next) {
 
     try {
         const hotels = await hotelModel.find({})
+        hotels.reverse()
 
         return res.send(hotels)
     } catch (error) {
@@ -198,6 +199,7 @@ export async function getAllRoom(req, res) {
 
     try {
         const Rooms = await roomModel.find({})
+        Rooms.reverse()
 
         return res.send(Rooms)
     } catch (error) {
@@ -209,30 +211,34 @@ export async function getAllRoom(req, res) {
 
 export const updateHotel = async (req, res) => {
 
-    const { id, hotel, location, description, category, imageUrl } = req.body
+    const hotel = req.body
+    console.log(hotel);
+    const Id = req.params.Id
 
     try {
-        const result = await hotelModel
-            .updateMany(
-                { _id: id },
-                {
-                    $set: {
-                        hotel,
-                        location,
-                        description,
-                        category,
-                        imageUrls: imageUrl,
-                    },
-                }
-            )
-        console.log(result);
-        res.status(200).json({ status: true, result });
+        const data = await hotelModel.findByIdAndUpdate(Id, hotel, { new: true });
+        console.log(data, "edited Hotel")
 
+        res.send({ data, message: "Hotel updated succesfully" })
     } catch (error) {
         console.log(error);
     }
 
 };
+
+export async function updateRoom(req, res) {
+    const room = req.body
+    const roomId = req.params.Id
+
+    try {
+        const data = await roomModel.findByIdAndUpdate(roomId, room, { new: true });
+        
+        res.send({ room, message: "Room updated succesfully" })
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json({ error })
+    }
+}
 
 export const changeBookingStatus = async (req, res) => {
 
@@ -258,7 +264,8 @@ export const changeBookingStatus = async (req, res) => {
 export const getAllBookings = async (req, res) => {
     try {
         const data = await bookingModel.find({})
-        console.log(data, 'ALL HOTELS')
+        data.reverse()
+
         res.send(data)
     } catch (error) {
         console.log(error)
@@ -338,5 +345,45 @@ export const getBookedRoom = async (req, res) => {
         res.send(data)
     } catch (error) {
         console.log(error)
+    }
+}
+
+export const getBookingTotal = async (req, res) => {
+    try {
+        const data = await bookingModel.countDocuments({})
+
+        res.json(data)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const getTotalRevenue = async (req, res) => {
+    try {
+        const data = await bookingModel.aggregate([{
+            $group: {
+                _id: null,
+                total: {
+                    $sum: "$total"
+                }
+            }
+        }
+        ])
+        let totall = data[0].total
+
+        res.json(totall)
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export const totalUser = async (req, res) => {
+    try {
+        const data = await userModel.countDocuments()
+
+        res.json(data)
+    } catch (error) {
+        console.log(error)
+
     }
 }
