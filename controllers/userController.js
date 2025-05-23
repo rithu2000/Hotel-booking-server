@@ -209,17 +209,17 @@ export const getMyBookings = async (req, res) => {
         return res.send(data)
     } catch (error) {
         console.log(error)
-    }   
+    }
 };
 
 export async function getUserDetails(req, res) {
     try {
-        const {userId} = req.params
+        const { userId } = req.params
         console.log(req.params);
         const data = await userModel.findById(userId)
         console.log(data, "the user kjhjkhkjhkhkjhkjhjkhjkhjklh");
         return res.send(data)
     } catch (error) {
-        return res.status(404).send({ error});
+        return res.status(404).send({ error });
     }
 }

@@ -4,15 +4,12 @@ import ENV from '../config.js'
 export default async function Auth(req, res, next) {
     try {
         const authHeader = req.headers.authorization;
-        console.log(authHeader,"indoooooooooo");
         if (!authHeader) {
             return res.status(200).send({
                 message: "auth failed ",
                 Status: false,
             });
         }
-
-        console.log("verummmmm indoooooooooo");
 
         const [token] = authHeader.split(" ");
         jwt.verify(

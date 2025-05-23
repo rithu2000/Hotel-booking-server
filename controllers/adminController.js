@@ -118,10 +118,10 @@ export async function getAllHotels(req, res, next) {
 
 export async function addRoom(req, res) {
 
-    const room = req.body
+    const { room } = req.body
     const hotelId = req.params.Id
     try {
-        const exist = roomModel.findOne({ room: req.body.room })
+        const exist = roomModel.findOne({ room })
 
         if (!exist) return res.status(200).send({ error: "Room is already existed" });
         if (exist) {
@@ -232,7 +232,7 @@ export async function updateRoom(req, res) {
 
     try {
         const data = await roomModel.findByIdAndUpdate(roomId, room, { new: true });
-        
+
         res.send({ room, message: "Room updated succesfully" })
     } catch (error) {
         console.log(error)
